@@ -2,6 +2,7 @@ import { config, validateEnv } from './config/env.js';
 import { initDatabase, closeDatabase } from './database/index.js';
 import { createBot } from './bot/index.js';
 import { cronService } from './services/cronService.js';
+import { keepAliveService } from './services/keepAliveService.js';
 import { logger } from './utils/logger.js';
 
 async function bootstrap() {
@@ -42,6 +43,9 @@ async function bootstrap() {
 
     // 3. Cron eslatmalar xizmatini faollashtirish
     cronService.init(bot);
+
+    // 4. Render uxlab qolmasligi uchun Keep-Alive HTTP server va Auto-Ping
+    await keepAliveService.start();
   } catch (launchError) {
     logger.error("Telegram botini launch qilishda xatolik:", launchError);
     process.exit(1);
@@ -51,6 +55,7 @@ async function bootstrap() {
   const shutdown = async (signal) => {
     logger.info(`\n[SHUTDOWN] ${signal} signali qabul qilindi. Resurslar tozalanmoqda...`);
     try {
+      keepAliveService.stop();
       cronService.stopAll();
       bot.stop(signal);
       await closeDatabase();

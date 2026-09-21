@@ -18,6 +18,9 @@ export const config = {
   isDev: (process.env.NODE_ENV || 'development') === 'development',
   dataDir: path.resolve(__dirname, '../../data'),
   sqlitePath: path.resolve(__dirname, '../../data/fitness_bot.db'),
+  port: parseInt(process.env.PORT || '3000', 10),
+  pingUrl: process.env.PING_URL || process.env.APP_URL || process.env.RENDER_EXTERNAL_URL || '',
+  pingIntervalMinutes: parseInt(process.env.PING_INTERVAL_MINUTES || '10', 10),
 };
 
 /**
